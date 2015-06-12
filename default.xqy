@@ -52,7 +52,6 @@ xdmp:set-response-content-type("text/html"),
 					</li>
 					)	
 			)	
-
 	}
 	</div>
 
@@ -74,11 +73,10 @@ xdmp:set-response-content-type("text/html"),
 											for $line in $searchResultSet
 											return 
 												<div class="Line">
-												{$line/text()}
+												{cts:highlight($line, $search, <span class="Highlighted">{$search}</span>)}
 												</div>
 
-									}</div>
-									
+									}</div>		
 						)
 				)
 			)
