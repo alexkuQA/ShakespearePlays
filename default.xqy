@@ -12,9 +12,13 @@ xdmp:set-response-content-type("text/html"),
 		<p><b>
 			Show all Plays, choose an order:
 		</b></p>
-		<input type="radio" name="order" value="ascending" checked="checked"/> ascending order
-		<br />
-		<input type="radio" name="order" value="descending" /> descending order
+		{let $order := xdmp:get-request-field("order", "")
+		return 
+			if ($order eq "" or $order eq "ascending") 
+			then(<input type="radio" name="order" value="ascending" checked="checked"/>, "ascending order",<br />,
+				 <input type="radio" name="order" value="descending" />,"descending order")
+			else(<input type="radio" name="order" value="ascending" />, "ascending order",<br />,
+				 <input type="radio" name="order" value="descending" checked="checked"/>,"descending order")}
 		<br />
 		<input type="submit" value="Show Plays" />
 	</form>
