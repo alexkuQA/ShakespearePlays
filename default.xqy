@@ -64,23 +64,26 @@ xdmp:set-response-content-type("text/html"),
 		let $search := xdmp:get-request-field("search", "")
 		return
 		if (empty($search) or $search eq "") then ()
-		else (<p> *** Search results for: {$search} ***</p>,
-				(for $x in xdmp:directory("Shakespeare/", "1")
-					let $uri := fn:base-uri($x)
-					let $filename := fn:substring-after($uri, "Shakespeare/")
-					let $searchResultSet := cts:search(doc($uri)//SPEECH/LINE, cts:word-query($search, ("case-insensitive")))						
-						return
-					 		if(empty($searchResultSet) or $searchResultSet eq "") then ()
-							else <div class="DocumentLines"> {
-										<div class="DocumentName">{$filename}</div>,
-										for $line in $searchResultSet
-										return 
-											<div class="Line">
-											{cts:highlight($line, cts:word-query($search, ("case-insensitive")), <span class="Highlighted">{$cts:text}</span>)}
-											</div>
+		else (let $allResults :=
+				for $x in xdmp:directory("Shakespeare/", "1")
+				let $uri := fn:base-uri($x)
+				let $filename := fn:substring-after($uri, "Shakespeare/")
+				let $searchResultSet := cts:search(doc($uri)//SPEECH/LINE, cts:word-query($search, ("case-insensitive")))						
+					return
+				 		if(empty($searchResultSet) or $searchResultSet eq "") then ()
+						else <div class="DocumentLines"> {
+									<div class="DocumentName">{$filename}</div>,
+									for $line in $searchResultSet
+									return 
+										<div class="Line">
+										{cts:highlight($line, cts:word-query($search, ("case-insensitive")), <span class="Highlighted">{$cts:text}</span>)}
+										</div>
 
-								}</div>		
-				)
+							}</div>	
+			return if (empty($allResults) or $allResults eq "") then
+				(<p>No results found for: {$search}</p>)
+			else
+				(<p> *** Search results for: {$search} ***</p>, $allResults)	
 			)
 	}
 	</div>
